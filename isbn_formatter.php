@@ -25,7 +25,7 @@
 
 <?php
 if (isset ($_GET['process'])){
-	$isbns = $_POST['isbns'];
+	$isbns = trim($_POST['isbns']);
 	?>
 	<h1>Results</h1>
 	<table border=1>
