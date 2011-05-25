@@ -85,8 +85,12 @@ function formatISBN($input_isbn){
 	// rest of the string that still has to be processed
 	$country_code = get_country_code($suffix);
 	$suffix = substr($suffix, strlen($country_code));
+	
+	// add publisher
 	$publisher = get_publisher($formatted_isbn.$country_code, $suffix, $isbn_ten);
 	$formatted_isbn .= $country_code."-".$publisher."-";
+	
+	// add checksum
 	$checksum = substr($suffix, -1);
 	$suffix = substr($suffix, 0, -1);
 	$remainder = substr($suffix, strlen($publisher));
