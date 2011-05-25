@@ -1,0 +1,9 @@
+Takes an unformatted ISBN-10 or ISBN-13 and formats it 
+with dashes using the RangesMessage.xml file from 
+www.isbn-international.org
+
+You will have to download the xml file from 
+http://www.isbn-international.org/agency?rmxml=1
+and save it as ranges.xml in your working directory for this to work
+
+This uses PHP's DOMDocument() to process the ranges XML file
