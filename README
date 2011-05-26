@@ -1,13 +1,19 @@
-Takes an unformatted ISBN-10 or ISBN-13 and formats it 
+Takes an unformatted ISBN-10 or ISBN-13, and formats it
 with dashes using the RangesMessage.xml file from 
 http://www.isbn-international.org/agency?rmxml=1
 
+Also has a function to validate an ISBN-10 or ISBN-13 using the checkdigit.
+
 Usage:
+isbn_formatter.php:
 formatISBN($ISBN) where $ISBN is an unformatted ISBN-10 or ISBN-13 returns a formatted ISBN-10 or ISBN-13
+
+isbn_validator.php:
+validateISBN($ISBN) where $ISBN is an unformatted ISBN-10 or ISBN-13 returns true if valid, false if not.
 
 To test, place example.php on a server with PHP and open it in a browser.
 
 Enter some ISBNs without dashes like
 9788992589109 
 9789868379206 
-and click Submit to see them formatted
+and click Submit to see them formatted and validated

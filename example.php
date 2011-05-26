@@ -1,5 +1,6 @@
 <?php
 include_once("isbn_formatter.php");
+include_once("isbn_validator.php");
 
 /*
  * Shows how you might use formatISBN();
@@ -29,6 +30,7 @@ if (isset ($_POST['isbns'])){
 		<tr>
 		<td><b>Input ISBN</b></td>
 		<td><b>Formatted ISBN</b></td>
+		<td><b>Valid?</b></td>
 		</tr>
 	</thead>
 	<?
@@ -41,6 +43,7 @@ if (isset ($_POST['isbns'])){
 		<tr>
 		<td><?=$single_isbn?>&nbsp;</td>
 		<td><?=$formatted_isbn?>&nbsp;</td>
+		<td><? if (validateISBN($formatted_isbn)) print "TRUE"; else print "FALSE";?>&nbsp;</td>
 		</tr>
 		<? 
 	}
