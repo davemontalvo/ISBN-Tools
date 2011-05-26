@@ -2,63 +2,14 @@
 /*
  * Takes an unformatted ISBN-10 or ISBN-13 and formats it 
  * with dashes using the RangesMessage.xml file from 
- * www.isbn-international.org
- * 
- * You will have to download the xml file from 
  * http://www.isbn-international.org/agency?rmxml=1
- * and save it as ranges.xml in your working directory for this to work
- * 
- * This uses PHP's DOMDocument() to process the ranges XML file
  */
-?>
 
-<html>
-<head><title>ISBN Formatter</title></head>
-<body>
-<h1>ISBN Formatter</h1>
-<form name="isbn_form" id="isbn_form" action="isbn_formatter.php?process" method="POST">
-<H3>Enter one or more Unformatted ISBN(s), one ISBN per line.</H3>
-<p><textarea name="isbns" id="isbns" rows="10"></textarea></p>
-<input type="submit" name="btn_submit" id="btn_submit" value="Submit" />
-<input type="button" name="btn_clear" id="btn_clear" value="Clear" onClick="location.href='isbn_formatter.php';"/>
-</form>
-
-<?php
-if (isset ($_GET['process'])){
-	$isbns = trim($_POST['isbns']);
-	?>
-	<h1>Results</h1>
-	<table border=1>
-	<thead>
-		<tr>
-		<td><b>Input ISBN</b></td>
-		<td><b>Formatted ISBN</b></td>
-		</tr>
-	</thead>
-	<?
-	// assumes 1 ISBN per line
-	$isbns = explode("\n", $isbns);
-	for ($i = 0; $i < count($isbns); $i++){
-		$single_isbn = trim($isbns[$i]);
-		$formatted_isbn = formatISBN($single_isbn)
-		?>
-		<tr>
-		<td><?=$single_isbn?>&nbsp;</td>
-		<td><?=$formatted_isbn?>&nbsp;</td>
-		</tr>
-		<? 
-	}
-	?>
-	</table>
-	<?php
-}
-?>
-</body>
-</html>
-<?php
 
 /*
  * Formats an ISBN-10 or ISBN-13 with dashes
+ * $input_isbn = an ISBN-10 or ISBN-13 without (or with) dashes
+ * returns a formatted ISBN-10 or ISBN-13 with dashes
  */
 function formatISBN($input_isbn){
 	$input_isbn = trim($input_isbn);
@@ -147,9 +98,8 @@ function get_publisher($prefix, $suffix, $isbn_ten){
 	if ($isbn_ten) $prefix = "978-".$prefix;
 	$suffix = substr($suffix, 0, 7);
 	$xmlDocument = new DOMDocument();
-	// download xml from http://www.isbn-international.org/agency?rmxml=1 and rename to ranges.xml
-	// in the working directory
-	$xmlDocument->load("ranges.xml");	
+	$ranges_xml_file = "http://www.isbn-international.org/agency?rmxml=1";
+	$xmlDocument->load($ranges_xml_file);	
 	$xpath = new DOMXPath($xmlDocument);
 	$xq = "/ISBNRangeMessage/RegistrationGroups/Group[Prefix=\"$prefix\"]/Rules/Rule/Range";
 	$ranges = $xpath->query($xq, $xmlDocument);
