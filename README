@@ -3,7 +3,7 @@ isbn_tools.php:
 ---------------------------
 Takes an unformatted ISBN-10 or ISBN-13, and formats it
 with dashes using the RangesMessage.xml file from 
-http://www.isbn-international.org/agency?rmxml=1
+http://www.isbn-international.org/page/ranges
 
 Also provides a validating function.
 
