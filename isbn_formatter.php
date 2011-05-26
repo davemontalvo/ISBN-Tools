@@ -39,6 +39,9 @@ function formatISBN($input_isbn){
 	
 	// add publisher
 	$publisher = get_publisher($formatted_isbn.$country_code, $suffix, $isbn_ten);
+	if ($publisher == "ERROR") {
+		return "RangesMessage.xml not loaded!";
+	}
 	$formatted_isbn .= $country_code."-".$publisher."-";
 	
 	// add checksum
@@ -99,25 +102,27 @@ function get_publisher($prefix, $suffix, $isbn_ten){
 	$suffix = substr($suffix, 0, 7);
 	$xmlDocument = new DOMDocument();
 	$ranges_xml_file = "http://www.isbn-international.org/agency?rmxml=1";
-	$xmlDocument->load($ranges_xml_file);	
-	$xpath = new DOMXPath($xmlDocument);
-	$xq = "/ISBNRangeMessage/RegistrationGroups/Group[Prefix=\"$prefix\"]/Rules/Rule/Range";
-	$ranges = $xpath->query($xq, $xmlDocument);
-	foreach ($ranges as $r){
-		$range = $r->nodeValue;
-		$range_r = explode("-", $range);
-		if ($suffix >= $range_r[0] && $suffix <= $range_r[1]){
-			// found the correct range
-			$sibling = $r->nextSibling;
-			while ($sibling != NULL){
-				if ($sibling->nodeName == "Length"){
-					$digits = $sibling->nodeValue;
+	if ($xmlDocument->load($ranges_xml_file)){
+		$xpath = new DOMXPath($xmlDocument);
+		$xq = "/ISBNRangeMessage/RegistrationGroups/Group[Prefix=\"$prefix\"]/Rules/Rule/Range";
+		$ranges = $xpath->query($xq, $xmlDocument);
+		foreach ($ranges as $r){
+			$range = $r->nodeValue;
+			$range_r = explode("-", $range);
+			if ($suffix >= $range_r[0] && $suffix <= $range_r[1]){
+				// found the correct range
+				$sibling = $r->nextSibling;
+				while ($sibling != NULL){
+					if ($sibling->nodeName == "Length"){
+						$digits = $sibling->nodeValue;
+					}
+					$sibling = $sibling->nextSibling;
 				}
-				$sibling = $sibling->nextSibling;
+				$publisher = substr($suffix, 0, $digits);
+				return $publisher;
 			}
-			$publisher = substr($suffix, 0, $digits);
-			return $publisher;
 		}
 	}
+	else return "ERROR";
 }
 ?>
