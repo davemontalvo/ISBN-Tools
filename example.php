@@ -1,15 +1,14 @@
 <?php
-include_once("isbn_formatter.php");
-include_once("isbn_validator.php");
+include_once("isbn_tools.php");
 
 /*
- * Shows how you might use formatISBN();
+ * Shows how you might use formatISBN(); and validateISBN();
  */
 ?>
 <html>
-<head><title>ISBN Formatter</title></head>
+<head><title>ISBN Tools</title></head>
 <body>
-<h1>ISBN Formatter</h1>
+<h1>ISBN Tools</h1>
 <form name="isbn_form" id="isbn_form" action="example.php" method="POST">
 <H3>Enter one or more Unformatted ISBN(s), one ISBN per line.</H3>
 <b>Sample Input:</b><br/>
