@@ -1,10 +1,6 @@
 Takes an unformatted ISBN-10 or ISBN-13 and formats it 
 with dashes using the RangesMessage.xml file from 
-www.isbn-international.org
-
-You will have to download RangesMessage.xml from 
 http://www.isbn-international.org/agency?rmxml=1
-and save it in your working directory for this to work
 
 Usage:
 formatISBN($ISBN) where $ISBN is an unformatted ISBN-10 or ISBN-13 returns a formatted ISBN-10 or ISBN-13
