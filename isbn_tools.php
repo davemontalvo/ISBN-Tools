@@ -159,6 +159,18 @@ function calculateCheckDigit($isbn){
 }
 
 /*
+	Convert ISBN-10 to ISBN-13 (Returns the non-hyphenated ISBN-13)
+*/
+function convert10to13($isbn){
+	if (validateISBN($isbn) == false) return "Error, not a valid ISBN-10";
+	$isbn13 = "978".substr($isbn, 0, 8);
+	if ($check_digit = calculateCheckDigit($isbn13)){
+		return $isbn = $isbn13.$check_digit;
+	}
+	return "ERROR";
+}
+
+/*
  *	Clean ISBN from incorrect Hyphens and Spaces
  */
 function cleanISBN($isbn){
