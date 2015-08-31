@@ -5,9 +5,8 @@
  * returns a formatted ISBN-10 or ISBN-13 with dashes
  */
 function formatISBN($input_isbn){
-	$input_isbn = trim($input_isbn);
-	// remove all hyphens
-	$input_isbn = str_replace("-", "", $input_isbn);
+	//Remove all non numeric charachters
+	(cleanISBN($isbn) == false ? return "ERROR" : $isbn = cleanISBN($isbn));
 	$isbn_ten = false;
 
 	if (strlen($input_isbn) == 13){
@@ -118,26 +117,57 @@ function get_publisher($prefix, $suffix, $isbn_ten){
  * false if not.
  */
 function validateISBN($isbn){
-	$isbn = trim($isbn);
-	$isbn = str_replace("-", "", $isbn);
-	if (strlen($isbn) == 10) {
-		$sum = $isbn[0]*10 + $isbn[1]*9 + $isbn[2]*8 + $isbn[3]*7 + $isbn[4]*6 + $isbn[5]*5 + $isbn[6]*4 + $isbn[7]*3 + $isbn[8]*2;
-		$check_digit = $isbn[9];
-		$test_check = 11 - ($sum % 11);
-		if ($test_check == 10) $test_check = "X";
-		if ($test_check == $check_digit) return true;
-		else return false;
+	//Remove all non numeric charachters
+	(cleanISBN($isbn) == false ? return false : $isbn = cleanISBN($isbn));
+	
+	switch($isbn_len){
+		case 10 :
+			$check_digit = ($isbn[9] == "X" ? 10 : $isbn[9]);
+			$sum = $isbn[0]*10 + $isbn[1]*9 + $isbn[2]*8 + $isbn[3]*7 + $isbn[4]*6 + $isbn[5]*5 + $isbn[6]*4 + $isbn[7]*3 + $isbn[8]*2 + $isbn[9];
+			return !($sum%11);
+		case 13 :
+			$sum = $isbn[0]*1 + $isbn[1]*3 + $isbn[2]*1 + $isbn[3]*3 + $isbn[4]*1 + $isbn[5]*3 + $isbn[6]*1 + $isbn[7]*3 + $isbn[8]*1 + $isbn[9]*3 + $isbn[10]*1 + $isbn[11]*3 + $isbn[12]*1;
+			return !($sum%10);
+		default : 
+			return false;
 	}
-	else if (strlen($isbn) == 13) {
+}
+
+/*
+ * Given an ISBN without the check digit, returns the complete isbn (non hyphenated)
+ */
+function calculateCheckDigit($isbn){
+	//Remove all non numeric charachters
+	(cleanISBN($isbn) == false ? return false : $isbn = cleanISBN($isbn));
+	
+	if (strlen($isbn) == 9) {
+		$sum = $isbn[0]*10 + $isbn[1]*9 + $isbn[2]*8 + $isbn[3]*7 + $isbn[4]*6 + $isbn[5]*5 + $isbn[6]*4 + $isbn[7]*3 + $isbn[8]*2;
+		
+		$test_digit = (11 - ($sum % 11)) % 11;
+		if ($test_digit == 10) $test_digit = "X";
+		
+		return $isbn . $test_digit;
+	}
+	else if (strlen($isbn) == 12) {
 		$sum = $isbn[0]*1 + $isbn[1]*3 + $isbn[2]*1 + $isbn[3]*3 + $isbn[4]*1 + $isbn[5]*3 + $isbn[6]*1 + $isbn[7]*3 + $isbn[8]*1 + $isbn[9]*3 + $isbn[10]*1 + $isbn[11]*3;
-		$check_digit = $isbn[12];
-		$test_check = 10 - ($sum % 10);
-		if ($test_check == 10) $test_check = 0;
-		if ($test_check == $check_digit) return true;
-		else return false;
+		
+		$test_digit = (10 - ($sum % 10)) % 10;
+		
+		return $isbn . $test_digit;
 	}
 	else return false;
 }
 
+/*
+ *	Clean ISBN from incorrect Hyphens and Spaces
+ */
+function cleanISBN($isbn){
+	$isbn = trim($isbn);
+	$isbn = preg_replace("/[^0-9X,.]/", "",$isbn);
+    if (strlen($isbn) != 10 && strlen($isbn) != 13){
+		return false;
+	}
+    return $isbn;
+}
 
 ?>
