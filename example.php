@@ -30,6 +30,7 @@ if (isset ($_POST['isbns'])){
 		<td><b>Input ISBN</b></td>
 		<td><b>Formatted ISBN</b></td>
 		<td><b>Valid?</b></td>
+		<td><b>Converted (10 To 13)</b></td>
 		</tr>
 	</thead>
 	<?
@@ -43,6 +44,7 @@ if (isset ($_POST['isbns'])){
 		<td><?=$single_isbn?>&nbsp;</td>
 		<td><?=$formatted_isbn?>&nbsp;</td>
 		<td><? if (validateISBN($formatted_isbn)) print "TRUE"; else print "FALSE";?>&nbsp;</td>
+		<td><?php echo formatISBN(convert10to13($formatted_isbn)); ?>&nbsp;</td>
 		</tr>
 		<? 
 	}

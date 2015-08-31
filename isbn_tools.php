@@ -6,7 +6,8 @@
  */
 function formatISBN($input_isbn){
 	//Remove all non numeric charachters
-	(cleanISBN($isbn) == false ? return "ERROR" : $isbn = cleanISBN($isbn));
+	if (!cleanISBN($input_isbn)) return "ERROR";
+	$input_isbn = cleanISBN($input_isbn);
 	$isbn_ten = false;
 
 	if (strlen($input_isbn) == 13){
@@ -118,12 +119,13 @@ function get_publisher($prefix, $suffix, $isbn_ten){
  */
 function validateISBN($isbn){
 	//Remove all non numeric charachters
-	(cleanISBN($isbn) == false ? return false : $isbn = cleanISBN($isbn));
+	if (!cleanISBN($isbn)) return false;
+	$isbn = cleanISBN($isbn);
 	
-	switch($isbn_len){
+	switch(strlen($isbn)){
 		case 10 :
 			$check_digit = ($isbn[9] == "X" ? 10 : $isbn[9]);
-			$sum = $isbn[0]*10 + $isbn[1]*9 + $isbn[2]*8 + $isbn[3]*7 + $isbn[4]*6 + $isbn[5]*5 + $isbn[6]*4 + $isbn[7]*3 + $isbn[8]*2 + $isbn[9];
+			$sum = $isbn[0]*10 + $isbn[1]*9 + $isbn[2]*8 + $isbn[3]*7 + $isbn[4]*6 + $isbn[5]*5 + $isbn[6]*4 + $isbn[7]*3 + $isbn[8]*2 + $check_digit;
 			return !($sum%11);
 		case 13 :
 			$sum = $isbn[0]*1 + $isbn[1]*3 + $isbn[2]*1 + $isbn[3]*3 + $isbn[4]*1 + $isbn[5]*3 + $isbn[6]*1 + $isbn[7]*3 + $isbn[8]*1 + $isbn[9]*3 + $isbn[10]*1 + $isbn[11]*3 + $isbn[12]*1;
@@ -138,8 +140,9 @@ function validateISBN($isbn){
  */
 function calculateCheckDigit($isbn){
 	//Remove all non numeric charachters
-	(cleanISBN($isbn) == false ? return false : $isbn = cleanISBN($isbn));
-	
+	if (!cleanISBN($isbn,1)) return false;
+	$isbn = cleanISBN($isbn,1);	
+
 	if (strlen($isbn) == 9) {
 		$sum = $isbn[0]*10 + $isbn[1]*9 + $isbn[2]*8 + $isbn[3]*7 + $isbn[4]*6 + $isbn[5]*5 + $isbn[6]*4 + $isbn[7]*3 + $isbn[8]*2;
 		
@@ -155,31 +158,35 @@ function calculateCheckDigit($isbn){
 		
 		return $isbn . $test_digit;
 	}
-	else return false;
+	return false;
 }
 
 /*
 	Convert ISBN-10 to ISBN-13 (Returns the non-hyphenated ISBN-13)
 */
 function convert10to13($isbn){
-	if (validateISBN($isbn) == false) return "Error, not a valid ISBN-10";
-	$isbn13 = "978".substr($isbn, 0, 8);
-	if ($check_digit = calculateCheckDigit($isbn13)){
-		return $isbn = $isbn13.$check_digit;
+	//Remove all non numeric charachters
+	if (!cleanISBN($isbn)) return "INVALID ISBN";
+	$isbn = cleanISBN($isbn);
+	if (validateISBN($isbn) == false || strlen($isbn) != 10) return "Error, not a valid ISBN-10";
+	
+	$isbn12 = "978".substr($isbn, 0, 9);
+	if ($isbn13 = calculateCheckDigit($isbn12)){
+		return $isbn13;
 	}
-	return "ERROR";
+	return "ERROR CONVERTING";
 }
 
 /*
  *	Clean ISBN from incorrect Hyphens and Spaces
  */
-function cleanISBN($isbn){
+function cleanISBN($isbn, $partial){
 	$isbn = trim($isbn);
-	$isbn = preg_replace("/[^0-9X,.]/", "",$isbn);
-    if (strlen($isbn) != 10 && strlen($isbn) != 13){
-		return false;
+	$isbn = preg_replace("/[^0-9Xx,.]/", "",$isbn);
+    if (strlen($isbn) == 10 || strlen($isbn) == 13 || ($partial && strlen($isbn) == 12) || ($partial && strlen($isbn) == 9)){
+		return $isbn;
 	}
-    return $isbn;
+    return false;
 }
 
 ?>
