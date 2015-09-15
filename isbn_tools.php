@@ -4,6 +4,7 @@
  * $input_isbn = an ISBN-10 or ISBN-13 without (or with) dashes
  * returns a formatted ISBN-10 or ISBN-13 with dashes
  */
+
 function formatISBN($input_isbn){
 	//Remove all non numeric charachters
 	if (!cleanISBN($input_isbn)) return "ERROR";
@@ -180,7 +181,7 @@ function convert10to13($isbn){
 /*
  *	Clean ISBN from incorrect Hyphens and Spaces
  */
-function cleanISBN($isbn, $partial){
+function cleanISBN($isbn, $partial = 0){
 	$isbn = trim($isbn);
 	$isbn = preg_replace("/[^0-9Xx,.]/", "",$isbn);
     if (strlen($isbn) == 10 || strlen($isbn) == 13 || ($partial && strlen($isbn) == 12) || ($partial && strlen($isbn) == 9)){
